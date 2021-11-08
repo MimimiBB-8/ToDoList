@@ -1,7 +1,7 @@
 const addInput = document.getElementById('input_task');
 const addButton = document.getElementById('add_task_btn');
 const todosWrapper = document.getElementById('todo_wrapper');
-const todosWrapperCompplite = document.getElementById('todo_wrapper_complite');
+var countTodoTask = 0;
 
 let task = [];
 let todoItems = [];
@@ -10,28 +10,29 @@ function Task(description) {
   this.state = false;
 }
 
-const CompliteTask = index => {
+const CompliteTask = (index, elem) => {
   task[index].state = !task[index].state;
   if (task[index].state) {
     todoItems[index].classList.add('checked');
-    moveElement(todosWrapperCompplite);
   }
   else {
     todoItems[index].classList.remove('checked');
-    moveElement(todosWrapper);
   }
-}
-
-const moveElement = (neededDiv) => {
-  neededDiv.appendChild(document.getElementById('add_item_id'));
 }
 
 const createTemplate = (task, index) => {
   return `
-    <div class='add_item ${task.state ? 'checked' : ''}' id='add_item_id'>
-      <input type="checkbox" onclick='CompliteTask(${index})' class='btn_state' ${task.state ? 'checked' : ''}>
-      <div class="descriptions">${task.description}</div>
-      <button class='btn_delete' onclick='deleteTask(${index})'>Delete</button>
+    <div class='row row-justify-content-between align-self-stretch add_item ${task.state ? 'checked' : ''}' id='add_item_id'>
+    <div class="col col-1">
+    <input class="form-check-input btn_state" type="checkbox" value=""  onclick='CompliteTask(${index})' >
+    </div>
+    <div class="col col-4">
+    <div class="descriptions">${task.description}</div>
+    </div>
+    <div class="col col-1">
+    <button class='btn_delete btn btn-outline-dark' onclick='deleteTask(${index})'>Delete</button>
+    </div>
+      
     </div>  
   `
 }
@@ -56,6 +57,7 @@ addButton.addEventListener('click', () => {
     task.push(new Task(addInput.value));
     addElement();
     addInput.value = '';
+
   }
   else {
     alert('Please, write your task')
