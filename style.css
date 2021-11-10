@@ -1,7 +1,86 @@
-.container{
-  padding-top: 20px;
+* {
+  font-family: 'Roboto', sans-serif;
+  font-size: 18px;
+  margin: 0;
 }
 
-#add_task_btn{
-  margin-left: 50px;
+h1 {
+  font-size: 25px;
+}
+
+.header {
+  background-color: #333;
+  color: #ddd;
+  padding: 10px 0;
+  margin-bottom: 40px;
+}
+
+.wrapper {
+  width: 800px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+.header .wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.form input {
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+.btn {
+  background-color: #12c0dd;
+  border: none;
+  color: #fff;
+  text-transform: uppercase;
+  padding: 8px 15px;
+  outline: none;
+  transition: 0.2s;
+}
+
+.add_item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  line-height: 32px;
+  margin-bottom: 10px;
+}
+
+.descriptions_wrapper {
+  display: flex;
+  align-items: center;
+}
+
+input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  margin-right: 20px;
+}
+
+/* .todo{
+  color: red;
+} */
+.checked{
+  color: green;
+  text-decoration: line-through;
+}
+
+.todo li {
+  padding: 1em;
+}
+
+.todo li:not(:last-child) {
+  border-bottom: 1px solid #000;
+}
+
+.done li {
+  padding: 1em;
+}
+
+.done li:not(:last-child) {
+  border-bottom: 1px solid #000;
 }
