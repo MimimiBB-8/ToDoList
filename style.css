@@ -61,14 +61,31 @@ input[type="checkbox"] {
   margin-right: 20px;
 }
 
-/* .todo{
-  color: red;
-} */
+.wrapper_count, .wrapper_count_todo, .wrapper_count_done {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.wrapper_count h1{
+  margin-right: 15px;
+}
+
+.wrapper_count label{
+  font-size: 1.1em;
+  border-radius: 50%;
+  border: 1px solid #333;
+  padding: 5px 10px;
+}
+
 .checked{
-  color: green;
+  color: gray;
   text-decoration: line-through;
 }
 
+.checked button{
+  background-color: lightslategrey;
+}
 .todo li {
   padding: 1em;
 }
