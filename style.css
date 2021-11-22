@@ -78,7 +78,7 @@ input[type="checkbox"] {
   padding: 5px 10px;
 }
 
-.checked{
+.checked label{
   color: gray;
   text-decoration: line-through;
 }
