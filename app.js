@@ -3,8 +3,15 @@ function ready() {
   const addButton = document.getElementById('add_task_btn');
   const todosWrapper = document.getElementById('todo_wrapper');
   const todo = document.querySelector('.todo');
-  let btnDelete = [];
-  
+  const filterTodo = document.querySelector('.wrapper_count_todo');
+  const filterDone = document.querySelector('.wrapper_count_done');
+  const filterAll = document.querySelector('.wrapper_count_all');
+  const deleteChoose = document.querySelector('.btn_delete_choose');
+  const deleteAll = document.querySelector('.btn_delete_all');
+  const countDone = document.getElementById('count_done');
+  const countToDo = document.getElementById('count_todo');
+  const countAll = document.getElementById('count_all')
+
 
   let todoItems = [];
   let task = [];
@@ -28,45 +35,50 @@ function ready() {
   }
 
   const compliteTask = (index) => {
-      task[index].state = !task[index].state;
-      if (task[index].state) {
-        todoItems[index].classList.add('checked');
+    task[index].state = !task[index].state;
+    if (task[index].state) {
+      todoItems[index].classList.add('checked');
 
-        document.getElementById('count_todo').innerHTML = '';
-        document.getElementById('count_done').innerHTML = '';
-        todoCount--;
-        doneCount++;
-        document.getElementById('count_todo').innerHTML += todoCount;
-        document.getElementById('count_done').innerHTML += doneCount;
+      countToDo.innerHTML = '';
+      countDone.innerHTML = '';
+      todoCount--;
+      doneCount++;
+      countToDo.innerHTML += todoCount;
+      countDone.innerHTML += doneCount;
 
-      }
-      else {
-        todoItems[index].classList.remove('checked');
-        document.getElementById('count_todo').innerHTML = '';
-        document.getElementById('count_done').innerHTML = '';
-        todoCount++;
-        doneCount--;
-        document.getElementById('count_todo').innerHTML += todoCount;
-        document.getElementById('count_done').innerHTML += doneCount;
-      }
-      
-      filterTask();
-      addElement();
+    }
+    else {
+      todoItems[index].classList.remove('checked');
+      countToDo.innerHTML = '';
+      countDone.innerHTML = '';
+      todoCount++;
+      doneCount--;
+      countToDo.innerHTML += todoCount;
+      countDone.innerHTML += doneCount;
+    }
+    sortTask();
+    addElement(task);
   }
 
-  const filterTask = () => {
-    // const activeTask = task.filter(item => item.state == false);
-    // const doneTask = task.filter(item => item.state == true);
-    // task = [...activeTask, ...doneTask]
-    task.sort(function(x, y) {
-      return (x === y)? 0 : x? 1 : -1;
-  });
+  const filterTask = (s) => {
+    let activeTask = []
+    if (s == 1) {
+      activeTask = task.filter(item => item.state == false);
+    }
+    if (s == 2) {
+      activeTask = task.filter(item => item.state == true);
+    }
+    addElement(activeTask)
   }
 
-  const addElement = () => {
+  const sortTask = () => {
+    task.sort((a, b) => { return a.state - b.state });
+  }
+
+  const addElement = (arr) => {
     todosWrapper.innerHTML = "";
-    if (task.length > 0) {
-      task.forEach((item, index) => {
+    if (arr.length > 0) {
+      arr.forEach((item, index) => {
         todosWrapper.innerHTML += createTemplate(item, index);
       })
       todoItems = document.querySelectorAll('.add_item')
@@ -75,43 +87,102 @@ function ready() {
 
   const deleteTask = index => {
     if (!task[index].state) {
-
-      document.getElementById('count_todo').innerHTML = '';
+      countToDo.innerHTML = '';
       todoCount--;
-      document.getElementById('count_todo').innerHTML += todoCount;
+      countToDo.innerHTML += todoCount;
     }
     else {
-
-      document.getElementById('count_done').innerHTML = '';
+      countDone.innerHTML = '';
       doneCount--;
-      document.getElementById('count_done').innerHTML += doneCount;
+      countDone.innerHTML += doneCount;
     }
     task.splice(index, 1);
-    addElement(); 
+    countAll.innerHTML = '';
+    countAll.innerHTML += task.length;
+    addElement(task);
   }
 
-  todo.addEventListener('click', function (e) {
-          
-    if (e.target.classList.value == "btn_state") {
-      task.forEach((item, index) => {
-        if(e.target.id == "item_"+index){
-          compliteTask(index)
-        }
-        }
-      )
+  deleteAll.addEventListener('click', () => {
+    if (confirm("Delete all elements?")) {
+      task.length = 0
+      addElement(task)
+      todoCount = 0
+      doneCount = 0;
+      countToDo.innerHTML = todoCount;
+      countDone.innerHTML = doneCount;
+      countAll.innerHTML = task.length;
     }
-    if (e.target.classList.value == "btn btn_delete") {
-      task.forEach((item, index) => {
-        if(e.target.id == "del_item_"+index){
-          deleteTask(index)
-        }
-      })
-      }
-    
-    
-    
   })
 
+  deleteChoose.addEventListener('click', () => {
+    let countState = 0;
+    if (confirm("Delete selected elements?")) {
+      for (let i = 0; i < task.length; i++) {
+        if (task[i].state == true) {
+          countState++;
+        }
+      }
+      task.splice(-countState, countState);
+      addElement(task);
+      doneCount = 0;
+      countDone.innerHTML = doneCount;
+      countAll.innerHTML = task.length;
+    }
+
+  })
+
+  filterTodo.addEventListener('click', () => {
+    filterTask(1)
+    filterAll.querySelector('h1').style.color = 'black'
+    filterTodo.querySelector('h1').style.color = '#DC143C'
+    filterDone.querySelector('h1').style.color = 'black'
+  })
+
+  filterDone.addEventListener('click', () => {
+    filterTask(2)
+    filterAll.querySelector('h1').style.color = 'black'
+    filterTodo.querySelector('h1').style.color = 'black'
+    filterDone.querySelector('h1').style.color = '#DC143C'
+  })
+
+  filterAll.addEventListener('click', () => {
+    addElement(task);
+    filterAll.querySelector('h1').style.color = '#DC143C';
+    filterTodo.querySelector('h1').style.color = 'black';
+    filterDone.querySelector('h1').style.color = 'black';
+  })
+
+  todo.addEventListener('click', function (e) {
+
+    if (e.target.classList.value == "btn_state") {
+      if (confirm("Move selected element?")) {
+        for (let i = 0; i < task.length; i++) {
+          if (e.target.id == "item_" + i) {
+            compliteTask(i)
+          }
+        }
+        filterAll.querySelector('h1').style.color = '#DC143C'
+        filterTodo.querySelector('h1').style.color = 'black'
+        filterDone.querySelector('h1').style.color = 'black'
+      }
+      else {
+        e.preventDefault();
+      }
+    }
+    if (e.target.classList.value == "btn btn_delete") {
+      if (confirm("Delete selected element?")) {
+        for (let i = 0; i < task.length; i++) {
+          if (e.target.id == "del_item_" + i) {
+            deleteTask(i)
+          }
+        }
+        filterAll.querySelector('h1').style.color = '#DC143C'
+        filterTodo.querySelector('h1').style.color = 'black'
+        filterDone.querySelector('h1').style.color = 'black';
+      }
+
+    }
+  })
 
   addButton.addEventListener('click', () => {
     actionInput();
@@ -124,18 +195,24 @@ function ready() {
   })
 
   const actionInput = () => {
-
     if (addInput.value.length > 0) {
-      document.getElementById('count_todo').innerHTML = '';
-      task.push(new Task(addInput.value));
-      addElement();
+      countToDo.innerHTML = '';
+      task.push(new Task(addInput.value))
+      sortTask()
+      addElement(task);
       addInput.value = '';
+      countAll.innerHTML = '';
+      countAll.innerHTML += task.length;
       todoCount++;
-      document.getElementById('count_todo').innerHTML += todoCount;
+      countToDo.innerHTML += todoCount;
     }
     else {
       alert('Please, write your task')
     }
+
+    filterAll.querySelector('h1').style.color = '#DC143C'
+    filterTodo.querySelector('h1').style.color = 'black'
+    filterDone.querySelector('h1').style.color = 'black'
   }
 }
 
