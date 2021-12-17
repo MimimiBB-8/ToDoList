@@ -2,52 +2,52 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
-  <title>ToDo List</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <title>ToDo List</title>
 </head>
 
 <body>
 
-  <script src="./app.js"></script>
-  <div class="header">
+    <script src="./app.js"></script>
+    <div class="header">
+        <div class="wrapper">
+            <h1 class="logo">ToDO List</h1>
+            <div class="form">
+                <input type="text" id="input_task" placeholder="Enter task">
+                <button class='btn' id='add_task_btn'>Add task</button>
+            </div>
+        </div>
+    </div>
     <div class="wrapper">
-      <h1 class="logo">ToDO List</h1>
-      <div class="form">
-        <input type="text" id="input_task" placeholder="Enter task">
-        <button class='btn' id='add_task_btn'>Add task</button>
-      </div>
+        <div class="wrapper_menu">
+            <div class="wrapper_count tab">
+                <div class="wrapper_count_all">
+                    <h1>All</h1>
+                    <label id=count_all> 0 </label>
+                </div>
+                <div class="wrapper_count_todo">
+                    <h1>ToDo</h1>
+                    <label id='count_todo'> 0 </label>
+                </div>
+                <div class="wrapper_count_done">
+                    <h1>Done</h1>
+                    <label id=count_done> 0 </label>
+                </div>
+            </div>
+            <div class="wrapper_btn">
+                <button class="btn btn_delete_choose">Delete choose</button>
+                <button class="btn btn_delete_all">delete All</button>
+            </div>
+        </div>
+        <ul class="todo" id="todo_wrapper">
+        </ul>
     </div>
-  </div>
-  <div class="wrapper">
-    <div class="wrapper_menu">
-      <div class="wrapper_count">
-        <div class="wrapper_count_all">
-          <h1>All</h1>
-          <label id=count_all> 0 </label>
-        </div>
-        <div class="wrapper_count_todo">
-          <h1>ToDo</h1>
-          <label id='count_todo'> 0 </label>
-        </div>
-        <div class="wrapper_count_done">
-          <h1>Done</h1>
-          <label id=count_done> 0 </label>
-        </div>
-      </div>
-      <div class="wrapper_btn">
-        <button class="btn btn_delete_choose">Delete choose</button>
-        <button class="btn btn_delete_all">delete All</button>
-      </div>
-    </div>
-    <ul class="todo" id="todo_wrapper">
-    </ul>
-  </div>
 </body>
 
 </html>

@@ -11,16 +11,23 @@ function ready() {
   const countDone = document.getElementById('count_done');
   const countToDo = document.getElementById('count_todo');
   const countAll = document.getElementById('count_all')
+  const tab = document.querySelector('.tab')
 
 
   let todoItems = [];
   let task = [];
-  let todoCount = 0, doneCount = 0;
+  let activeTask = [];
+  let todoCount = 0,
+    doneCount = 0,
+    idElem = 0;
 
-  function Task(description) {
+  function Task(description, id) {
     this.description = description;
     this.state = false;
+    this.id = id;
   }
+
+
 
   const createTemplate = (task, index) => {
     return `
@@ -46,8 +53,7 @@ function ready() {
       countToDo.innerHTML += todoCount;
       countDone.innerHTML += doneCount;
 
-    }
-    else {
+    } else {
       todoItems[index].classList.remove('checked');
       countToDo.innerHTML = '';
       countDone.innerHTML = '';
@@ -60,12 +66,11 @@ function ready() {
     addElement(task);
   }
 
-  const filterTask = (s) => {
-    let activeTask = []
-    if (s == 1) {
+  const filterTask = (parametr) => {
+    if (parametr == 1) {
       activeTask = task.filter(item => item.state == false);
     }
-    if (s == 2) {
+    if (parametr == 2) {
       activeTask = task.filter(item => item.state == true);
     }
     addElement(activeTask)
@@ -90,13 +95,22 @@ function ready() {
       countToDo.innerHTML = '';
       todoCount--;
       countToDo.innerHTML += todoCount;
-    }
-    else {
+    } else {
       countDone.innerHTML = '';
       doneCount--;
       countDone.innerHTML += doneCount;
     }
-    task.splice(index, 1);
+    if (filterDone.classList.contains("active")) {
+      for (let i = 0; i < task.length; i++) {
+        if (activeTask[index] == task[i]) {
+          task.splice(i, 1);
+
+        }
+      }
+    }
+    else {
+      task.splice(index, 1);
+    }
     countAll.innerHTML = '';
     countAll.innerHTML += task.length;
     addElement(task);
@@ -111,6 +125,8 @@ function ready() {
       countToDo.innerHTML = todoCount;
       countDone.innerHTML = doneCount;
       countAll.innerHTML = task.length;
+      
+      localStorage.setItem('todo',JSON.stringify(task))
     }
   })
 
@@ -127,45 +143,48 @@ function ready() {
       doneCount = 0;
       countDone.innerHTML = doneCount;
       countAll.innerHTML = task.length;
+      
+      localStorage.setItem('todo',JSON.stringify(task))
     }
 
   })
 
   filterTodo.addEventListener('click', () => {
     filterTask(1)
-    filterAll.querySelector('h1').style.color = 'black'
-    filterTodo.querySelector('h1').style.color = '#DC143C'
-    filterDone.querySelector('h1').style.color = 'black'
+    document.querySelector(".todo").classList.toggle("todo-moved");
+    filterTodo.classList.add('active')
+    filterDone.classList.remove('active')
+    filterAll.classList.remove('active')
+
   })
 
   filterDone.addEventListener('click', () => {
     filterTask(2)
-    filterAll.querySelector('h1').style.color = 'black'
-    filterTodo.querySelector('h1').style.color = 'black'
-    filterDone.querySelector('h1').style.color = '#DC143C'
+    document.querySelector(".todo").classList.toggle("todo-moved");
+    filterDone.classList.add('active')
+    filterTodo.classList.remove('active')
+    filterAll.classList.remove('active')
   })
 
   filterAll.addEventListener('click', () => {
     addElement(task);
-    filterAll.querySelector('h1').style.color = '#DC143C';
-    filterTodo.querySelector('h1').style.color = 'black';
-    filterDone.querySelector('h1').style.color = 'black';
+    document.querySelector(".todo").classList.toggle("todo-moved");
+    filterAll.classList.add('active')
+    filterDone.classList.remove('active')
+    filterTodo.classList.remove('active')
   })
 
   todo.addEventListener('click', function (e) {
-
     if (e.target.classList.value == "btn_state") {
       if (confirm("Move selected element?")) {
         for (let i = 0; i < task.length; i++) {
           if (e.target.id == "item_" + i) {
             compliteTask(i)
+            
+      localStorage.setItem('todo',JSON.stringify(task))
           }
         }
-        filterAll.querySelector('h1').style.color = '#DC143C'
-        filterTodo.querySelector('h1').style.color = 'black'
-        filterDone.querySelector('h1').style.color = 'black'
-      }
-      else {
+      } else {
         e.preventDefault();
       }
     }
@@ -174,15 +193,25 @@ function ready() {
         for (let i = 0; i < task.length; i++) {
           if (e.target.id == "del_item_" + i) {
             deleteTask(i)
+
+            localStorage.setItem('todo', JSON.stringify(task))
           }
         }
-        filterAll.querySelector('h1').style.color = '#DC143C'
-        filterTodo.querySelector('h1').style.color = 'black'
-        filterDone.querySelector('h1').style.color = 'black';
       }
 
     }
   })
+
+  if (localStorage.getItem('todo')) {
+    task = JSON.parse(localStorage.getItem('todo'))
+    addElement(task);
+    countAll.innerHTML = task.length;
+    for (let i = 0; i < task.length; i++) {
+      (task[i].state) ? doneCount += 1 : todoCount += 1;
+    }
+    countToDo.innerHTML = todoCount;
+    countDone.innerHTML = doneCount;
+  }
 
   addButton.addEventListener('click', () => {
     actionInput();
@@ -197,24 +226,23 @@ function ready() {
   const actionInput = () => {
     if (addInput.value.length > 0) {
       countToDo.innerHTML = '';
-      task.push(new Task(addInput.value))
+      idElem += 1;
+      task.push(new Task(addInput.value, idElem))
       sortTask()
       addElement(task);
+      localStorage.setItem('todo', JSON.stringify(task))
       addInput.value = '';
       countAll.innerHTML = '';
       countAll.innerHTML += task.length;
       todoCount++;
       countToDo.innerHTML += todoCount;
-    }
-    else {
+    } else {
       alert('Please, write your task')
     }
 
-    filterAll.querySelector('h1').style.color = '#DC143C'
-    filterTodo.querySelector('h1').style.color = 'black'
-    filterDone.querySelector('h1').style.color = 'black'
   }
+
 }
 
-document.addEventListener("DOMContentLoaded", ready);
 
+document.addEventListener("DOMContentLoaded", ready);
