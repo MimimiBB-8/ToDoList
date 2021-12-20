@@ -1,4 +1,4 @@
-function ready() {
+document.addEventListener("DOMContentLoaded", function(){
   const addInput = document.getElementById('input_task');
   const addButton = document.getElementById('add_task_btn');
   const todosWrapper = document.getElementById('todo_wrapper');
@@ -29,7 +29,7 @@ function ready() {
 
 
 
-  const createTemplate = (task, index) => {
+  function createTemplate(task, index) {
     return `
     <li class='add_item ${task.state ? 'checked' : ''}'>
       <div class='descriptions_wrapper'>
@@ -37,11 +37,10 @@ function ready() {
         <label for='item_${index}' class="descriptions">${task.description}</label>
       </div>
       <button class='btn btn_delete' id='del_item_${index}'>Delete</button>
-    </li>  
-  `
+    </li>  `
   }
 
-  const compliteTask = (index) => {
+  function compliteTask(index) {
     task[index].state = !task[index].state;
     if (task[index].state) {
       todoItems[index].classList.add('checked');
@@ -66,31 +65,31 @@ function ready() {
     addElement(task);
   }
 
-  const filterTask = (parametr) => {
+  function filterTask(parametr) {
     if (parametr == 1) {
-      activeTask = task.filter(item => item.state == false);
+      activeTask = task.filter(function (item) {item.state == false});
     }
     if (parametr == 2) {
-      activeTask = task.filter(item => item.state == true);
+      activeTask = task.filter(function (item) { item.state == true });
     }
     addElement(activeTask)
   }
 
-  const sortTask = () => {
-    task.sort((a, b) => { return a.state - b.state });
+  function sortTask(){
+    task.sort(function(a, b){ return a.state - b.state });
   }
 
-  const addElement = (arr) => {
+  function addElement(arr) {
     todosWrapper.innerHTML = "";
     if (arr.length > 0) {
-      arr.forEach((item, index) => {
+      arr.forEach(function(item, index){
         todosWrapper.innerHTML += createTemplate(item, index);
       })
       todoItems = document.querySelectorAll('.add_item')
     }
   }
 
-  const deleteTask = index => {
+  function deleteTask(index) {
     if (!task[index].state) {
       countToDo.innerHTML = '';
       todoCount--;
@@ -116,7 +115,7 @@ function ready() {
     addElement(task);
   }
 
-  deleteAll.addEventListener('click', () => {
+  deleteAll.addEventListener('click', function() {
     if (confirm("Delete all elements?")) {
       task.length = 0
       addElement(task)
@@ -125,12 +124,10 @@ function ready() {
       countToDo.innerHTML = todoCount;
       countDone.innerHTML = doneCount;
       countAll.innerHTML = task.length;
-      
-      localStorage.setItem('todo',JSON.stringify(task))
     }
   })
 
-  deleteChoose.addEventListener('click', () => {
+  deleteChoose.addEventListener('click', function() {
     let countState = 0;
     if (confirm("Delete selected elements?")) {
       for (let i = 0; i < task.length; i++) {
@@ -138,18 +135,18 @@ function ready() {
           countState++;
         }
       }
-      task.splice(-countState, countState);
+      task.length = task.length - countState;
       addElement(task);
       doneCount = 0;
       countDone.innerHTML = doneCount;
       countAll.innerHTML = task.length;
-      
-      localStorage.setItem('todo',JSON.stringify(task))
+
+      localStorage.setItem('todo', JSON.stringify(task))
     }
 
   })
 
-  filterTodo.addEventListener('click', () => {
+  filterTodo.addEventListener('click', function() {
     filterTask(1)
     document.querySelector(".todo").classList.toggle("todo-moved");
     filterTodo.classList.add('active')
@@ -158,7 +155,7 @@ function ready() {
 
   })
 
-  filterDone.addEventListener('click', () => {
+  filterDone.addEventListener('click', function(){
     filterTask(2)
     document.querySelector(".todo").classList.toggle("todo-moved");
     filterDone.classList.add('active')
@@ -166,7 +163,7 @@ function ready() {
     filterAll.classList.remove('active')
   })
 
-  filterAll.addEventListener('click', () => {
+  filterAll.addEventListener('click', function() {
     addElement(task);
     document.querySelector(".todo").classList.toggle("todo-moved");
     filterAll.classList.add('active')
@@ -180,8 +177,8 @@ function ready() {
         for (let i = 0; i < task.length; i++) {
           if (e.target.id == "item_" + i) {
             compliteTask(i)
-            
-      localStorage.setItem('todo',JSON.stringify(task))
+
+            localStorage.setItem('todo', JSON.stringify(task))
           }
         }
       } else {
@@ -213,7 +210,7 @@ function ready() {
     countDone.innerHTML = doneCount;
   }
 
-  addButton.addEventListener('click', () => {
+  addButton.addEventListener('click', function() {
     actionInput();
   })
 
@@ -223,7 +220,7 @@ function ready() {
     }
   })
 
-  const actionInput = () => {
+  function actionInput () {
     if (addInput.value.length > 0) {
       countToDo.innerHTML = '';
       idElem += 1;
@@ -241,8 +238,4 @@ function ready() {
     }
 
   }
-
-}
-
-
-document.addEventListener("DOMContentLoaded", ready);
+});
