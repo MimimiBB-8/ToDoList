@@ -58,13 +58,13 @@ document.addEventListener("DOMContentLoaded", function () {
   function filterTask(parametr) {
     if (parametr == 1) {
       activeTask = task.filter(function (item) {
-        item.state == false;
+        return item.state == false;
       });
     }
 
     if (parametr == 2) {
       activeTask = task.filter(function (item) {
-        item.state == true;
+        return item.state == true;
       });
     }
 
@@ -123,6 +123,7 @@ document.addEventListener("DOMContentLoaded", function () {
       countToDo.innerHTML = todoCount;
       countDone.innerHTML = doneCount;
       countAll.innerHTML = task.length;
+      localStorage.clear();
     }
   });
   deleteChoose.addEventListener('click', function () {
@@ -164,7 +165,12 @@ document.addEventListener("DOMContentLoaded", function () {
     filterDone.classList.remove('active');
     filterTodo.classList.remove('active');
   });
+
+  function dell() {}
+
   todo.addEventListener('click', function (e) {
+    console.log(true);
+
     if (e.target.classList.value == "btn_state") {
       if (confirm("Move selected element?")) {
         for (var i = 0; i < task.length; i++) {
@@ -190,19 +196,41 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  if (localStorage.getItem('todo')) {
-    task = JSON.parse(localStorage.getItem('todo'));
-    addElement(task);
-    countAll.innerHTML = task.length;
-
-    for (var i = 0; i < task.length; i++) {
-      task[i].state ? doneCount += 1 : todoCount += 1;
+  function storageAvailable(type) {
+    try {
+      var storage = window[type],
+          x = '__storage_test__';
+      storage.setItem(x, x);
+      storage.removeItem(x);
+      return true;
+    } catch (e) {
+      return false;
     }
-
-    countToDo.innerHTML = todoCount;
-    countDone.innerHTML = doneCount;
   }
 
+  if (storageAvailable('localStorage')) {
+    if (localStorage.getItem('todo')) {
+      task = JSON.parse(localStorage.getItem('todo'));
+      addElement(task);
+      countAll.innerHTML = task.length;
+
+      for (var i = 0; i < task.length; i++) {
+        task[i].state ? doneCount += 1 : todoCount += 1;
+      }
+
+      countToDo.innerHTML = todoCount;
+      countDone.innerHTML = doneCount;
+    }
+  } else {
+    console.log('no');
+  }
+
+  document.getElementById('scrollToTop').addEventListener('click', function () {
+    window.scrollTo(0, 0);
+  });
+  document.getElementById('scrollToBottom').addEventListener('click', function () {
+    window.scrollTo(0, document.body.scrollHeight);
+  });
   addButton.addEventListener('click', function () {
     actionInput();
   });

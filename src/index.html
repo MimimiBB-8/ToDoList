@@ -15,39 +15,47 @@
 <body>
 
     <script src="../build/app.js"></script>
-    <div class="header">
+    <div class="page">
+        <div class="header">
+            <div class="wrapper">
+                <h1 class="logo">ToDO List</h1>
+                <div class="form">
+                    <input type="text" id="input_task" placeholder="Enter task">
+                    <button class='btn' id='add_task_btn'>Add task</button>
+                </div>
+            </div>
+        </div>
         <div class="wrapper">
-            <h1 class="logo">ToDO List</h1>
-            <div class="form">
-                <input type="text" id="input_task" placeholder="Enter task">
-                <button class='btn' id='add_task_btn'>Add task</button>
+            <div class="wrapper_menu">
+                <div class="wrapper_count tab">
+                    <div class="wrapper_count_all">
+                        <h1>All</h1>
+                        <label id=count_all> 0 </label>
+                    </div>
+                    <div class="wrapper_count_todo">
+                        <h1>ToDo</h1>
+                        <label id='count_todo'> 0 </label>
+                    </div>
+                    <div class="wrapper_count_done">
+                        <h1>Done</h1>
+                        <label id=count_done> 0 </label>
+                    </div>
+                </div>
+                <div class="wrapper_btn">
+                    <button class="btn btn_delete_choose">Clear completed</button>
+                    <button class="btn btn_delete_all">Clear All</button>
+                </div>
             </div>
+            <ul class="todo" id="todo_wrapper">
+            </ul>
+        </div>
+
+        <div>
+            <a id="scrollToTop" > </a>
+            <a id="scrollToBottom"> </a>
         </div>
     </div>
-    <div class="wrapper">
-        <div class="wrapper_menu">
-            <div class="wrapper_count tab">
-                <div class="wrapper_count_all">
-                    <h1>All</h1>
-                    <label id=count_all> 0 </label>
-                </div>
-                <div class="wrapper_count_todo">
-                    <h1>ToDo</h1>
-                    <label id='count_todo'> 0 </label>
-                </div>
-                <div class="wrapper_count_done">
-                    <h1>Done</h1>
-                    <label id=count_done> 0 </label>
-                </div>
-            </div>
-            <div class="wrapper_btn">
-                <button class="btn btn_delete_choose">Clear completed</button>
-                <button class="btn btn_delete_all">Clear All</button>
-            </div>
-        </div>
-        <ul class="todo" id="todo_wrapper">
-        </ul>
-    </div>
+
 </body>
 
 </html>

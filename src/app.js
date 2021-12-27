@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function(){
+document.addEventListener("DOMContentLoaded", function () {
   const addInput = document.getElementById('input_task');
   const addButton = document.getElementById('add_task_btn');
   const todosWrapper = document.getElementById('todo_wrapper');
@@ -65,22 +65,22 @@ document.addEventListener("DOMContentLoaded", function(){
 
   function filterTask(parametr) {
     if (parametr == 1) {
-      activeTask = task.filter(function (item) {item.state == false});
+      activeTask = task.filter((item) => item.state == false);
     }
     if (parametr == 2) {
-      activeTask = task.filter(function (item) { item.state == true });
+      activeTask = task.filter((item) => item.state == true);
     }
     addElement(activeTask)
   }
 
-  function sortTask(){
-    task.sort(function(a, b){ return a.state - b.state });
+  function sortTask() {
+    task.sort(function (a, b) { return a.state - b.state });
   }
 
   function addElement(arr) {
     todosWrapper.innerHTML = "";
     if (arr.length > 0) {
-      arr.forEach(function(item, index){
+      arr.forEach(function (item, index) {
         todosWrapper.innerHTML += createTemplate(item, index);
       })
       todoItems = document.querySelectorAll('.add_item')
@@ -113,7 +113,7 @@ document.addEventListener("DOMContentLoaded", function(){
     addElement(task);
   }
 
-  deleteAll.addEventListener('click', function() {
+  deleteAll.addEventListener('click', function () {
     if (confirm("Delete all elements?")) {
       task.length = 0
       addElement(task)
@@ -122,10 +122,11 @@ document.addEventListener("DOMContentLoaded", function(){
       countToDo.innerHTML = todoCount;
       countDone.innerHTML = doneCount;
       countAll.innerHTML = task.length;
+      localStorage.clear()
     }
   })
 
-  deleteChoose.addEventListener('click', function() {
+  deleteChoose.addEventListener('click', function () {
     let countState = 0;
     if (confirm("Delete selected elements?")) {
       for (let i = 0; i < task.length; i++) {
@@ -144,16 +145,16 @@ document.addEventListener("DOMContentLoaded", function(){
 
   })
 
-  filterTodo.addEventListener('click', function() {
+  filterTodo.addEventListener('click', function () {
     filterTask(1)
-    document.querySelector(".todo").classList.toggle("todo-moved");
+    document.querySelector(".todo").classList.toggle("todo-moved")
     filterTodo.classList.add('active')
     filterDone.classList.remove('active')
     filterAll.classList.remove('active')
 
   })
 
-  filterDone.addEventListener('click', function(){
+  filterDone.addEventListener('click', function () {
     filterTask(2)
     document.querySelector(".todo").classList.toggle("todo-moved");
     filterDone.classList.add('active')
@@ -161,7 +162,7 @@ document.addEventListener("DOMContentLoaded", function(){
     filterAll.classList.remove('active')
   })
 
-  filterAll.addEventListener('click', function() {
+  filterAll.addEventListener('click', function () {
     addElement(task);
     document.querySelector(".todo").classList.toggle("todo-moved");
     filterAll.classList.add('active')
@@ -169,13 +170,16 @@ document.addEventListener("DOMContentLoaded", function(){
     filterTodo.classList.remove('active')
   })
 
+  function dell (){
+    
+  }
   todo.addEventListener('click', function (e) {
+    console.log(true)
     if (e.target.classList.value == "btn_state") {
       if (confirm("Move selected element?")) {
         for (let i = 0; i < task.length; i++) {
           if (e.target.id == "item_" + i) {
             compliteTask(i)
-
             localStorage.setItem('todo', JSON.stringify(task))
           }
         }
@@ -197,18 +201,45 @@ document.addEventListener("DOMContentLoaded", function(){
     }
   })
 
-  if (localStorage.getItem('todo')) {
-    task = JSON.parse(localStorage.getItem('todo'))
-    addElement(task);
-    countAll.innerHTML = task.length;
-    for (let i = 0; i < task.length; i++) {
-      (task[i].state) ? doneCount += 1 : todoCount += 1;
+  function storageAvailable(type) {
+    try {
+      var storage = window[type],
+        x = '__storage_test__';
+      storage.setItem(x, x);
+      storage.removeItem(x);
+      return true;
     }
-    countToDo.innerHTML = todoCount;
-    countDone.innerHTML = doneCount;
+    catch (e) {
+      return false;
+    }
   }
 
-  addButton.addEventListener('click', function() {
+  if (storageAvailable('localStorage')) {
+    if (localStorage.getItem('todo')) {
+      task = JSON.parse(localStorage.getItem('todo'))
+      addElement(task);
+      countAll.innerHTML = task.length;
+      for (let i = 0; i < task.length; i++) {
+        (task[i].state) ? doneCount += 1 : todoCount += 1;
+      }
+      countToDo.innerHTML = todoCount;
+      countDone.innerHTML = doneCount;
+    }
+  }
+  else {
+    console.log('no')
+  }
+
+
+  document.getElementById('scrollToTop').addEventListener('click', function () {
+    window.scrollTo(0, 0);
+  })
+
+  document.getElementById('scrollToBottom').addEventListener('click', function () {
+    window.scrollTo(0, document.body.scrollHeight);
+  })
+
+  addButton.addEventListener('click', function () {
     actionInput();
   })
 
@@ -218,7 +249,7 @@ document.addEventListener("DOMContentLoaded", function(){
     }
   })
 
-  function actionInput () {
+  function actionInput() {
     if (addInput.value.length > 0) {
       countToDo.innerHTML = '';
       idElem += 1;
@@ -234,6 +265,5 @@ document.addEventListener("DOMContentLoaded", function(){
     } else {
       alert('Please, write your task')
     }
-
   }
 });
