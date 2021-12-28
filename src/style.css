@@ -2,8 +2,12 @@
     font-family: 'Roboto', sans-serif;
     font-size: 18px;
     margin: 0;
+    padding: 0;
 }
 
+tr{
+    padding: 0;
+}
 h1 {
     font-size: 25px;
 }
@@ -43,26 +47,6 @@ h1 {
     cursor: pointer;
 }
 
-.add_item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    line-height: 32px;
-    margin-bottom: 10px;
-
-}
-
-.descriptions_wrapper {
-    display: flex;
-    align-items: center;
-}
-
-input[type="checkbox"] {
-    width: 20px;
-    height: 20px;
-    margin-right: 20px;
-}
-
 .wrapper_count,
 .wrapper_count_todo,
 .wrapper_count_done,
@@ -94,7 +78,7 @@ input[type="checkbox"] {
 }
 
 .wrapper_count label {
-    
+
     text-align: center;
     height: 40px;
     width: 40px;
@@ -102,6 +86,33 @@ input[type="checkbox"] {
     line-height: 40px;
     border-radius: 50%;
     border: 1px solid #333;
+}
+
+table {
+    width: 100%;
+}
+
+.add_item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    line-height: 32px;
+}
+
+.descriptions_wrapper {
+    display: flex;
+    align-items: center;
+}
+
+
+input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin-right: 20px;
+}
+
+.descriptions{
+    width: 400px;
 }
 
 .checked label {
@@ -113,15 +124,18 @@ input[type="checkbox"] {
     background-color: lightslategrey;
 }
 
-.todo li {
-    padding: 1em;
+.todo tr {
+    padding: .75em;
 }
 
-.todo li:not(:last-child) {
+.todo tr:not(:last-child) {
     border-bottom: 1px solid #000;
 
 }
 
+.td_button{
+    text-align: right;
+}
 /* .active{
     color: grey;
 } */
@@ -166,6 +180,7 @@ input[type="checkbox"] {
     line-height: 40px;
     color: #fff;
 }
+
 #scrollToBottom::after {
     content: '▼';
 }

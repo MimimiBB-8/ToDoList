@@ -29,13 +29,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function createTemplate(task, index) {
     return `
-    <li class='add_item ${task.state ? 'checked' : ''}'>
+    <tr class='add_item ${task.state ? 'checked' : ''}' >
+    <td>
       <div class='descriptions_wrapper'>
         <input class="btn_state" type="checkbox" id='item_${index}'  ${task.state ? 'checked' : ''}>
-        <label for='item_${index}' class="descriptions">${task.description}</label>
+        <label class="descriptions">${task.description}</label>
       </div>
+      </td>
+      <td class='td_button'>
       <button class='btn btn_delete' id='del_item_${index}'>Delete</button>
-    </li>  `
+      </td>
+    </tr>  `
   }
 
   function compliteTask(index) {
@@ -147,7 +151,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   filterTodo.addEventListener('click', function () {
     filterTask(1)
-    document.querySelector(".todo").classList.toggle("todo-moved")
+    // document.querySelector(".todo").classList.toggle("todo-moved")
     filterTodo.classList.add('active')
     filterDone.classList.remove('active')
     filterAll.classList.remove('active')
@@ -156,7 +160,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   filterDone.addEventListener('click', function () {
     filterTask(2)
-    document.querySelector(".todo").classList.toggle("todo-moved");
+    // document.querySelector(".todo").classList.toggle("todo-moved");
     filterDone.classList.add('active')
     filterTodo.classList.remove('active')
     filterAll.classList.remove('active')
@@ -164,17 +168,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
   filterAll.addEventListener('click', function () {
     addElement(task);
-    document.querySelector(".todo").classList.toggle("todo-moved");
+    // document.querySelector(".todo").classList.toggle("todo-moved");
     filterAll.classList.add('active')
     filterDone.classList.remove('active')
     filterTodo.classList.remove('active')
   })
 
-  function dell (){
-    
-  }
   todo.addEventListener('click', function (e) {
-    console.log(true)
     if (e.target.classList.value == "btn_state") {
       if (confirm("Move selected element?")) {
         for (let i = 0; i < task.length; i++) {
@@ -197,9 +197,64 @@ document.addEventListener("DOMContentLoaded", function () {
           }
         }
       }
-
     }
+    if (e.target.classList.value == "descriptions") {
+      RowClick(e)
+    }
+
   })
+
+  var lastSelectedRow;
+  var trs = document.getElementsByTagName('tr');
+  document.onselectstart = function () {
+    return false;
+  }
+
+  function RowClick(currenttr) {
+
+    if (window.event.ctrlKey) {
+      toggleRow(currenttr);
+      console.log(currenttr, 'ctrl')
+    }
+
+    if (window.event.button === 0) {
+      if (!window.event.ctrlKey && !window.event.shiftKey) {
+        clearAll();
+        toggleRow(currenttr);
+
+        console.log(currenttr, 'ccc', lastSelectedRow)
+      }
+
+      if (window.event.shiftKey) {
+        selectRowsBetweenIndexes([lastSelectedRow.rowIndex, currenttr.rowIndex])
+
+        console.log(trs, currenttr, 'shift', [lastSelectedRow.rowIndex, currenttr.rowIndex])
+      }
+    }
+  }
+
+  function toggleRow(row) {
+    console.log(row, row.className)
+    row.className = row.className == 'selected' ? '' : 'selected';
+    lastSelectedRow = row;
+  }
+
+  function selectRowsBetweenIndexes(indexes) {
+    indexes.sort(function (a, b) {
+      return a - b;
+    });
+
+    for (var i = indexes[0]; i <= indexes[1]; i++) {
+      trs[i - 1].className = 'selected';
+    }
+  }
+
+  function clearAll() {
+    for (var i = 0; i < trs.length; i++) {
+      trs[i].className = '';
+    }
+  }
+
 
   function storageAvailable(type) {
     try {
