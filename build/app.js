@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function createTemplate(task, index) {
-    return "\n    <li class='add_item ".concat(task.state ? 'checked' : '', "'>\n      <div class='descriptions_wrapper'>\n        <input class=\"btn_state\" type=\"checkbox\" id='item_").concat(index, "'  ").concat(task.state ? 'checked' : '', ">\n        <label for='item_").concat(index, "' class=\"descriptions\">").concat(task.description, "</label>\n      </div>\n      <button class='btn btn_delete' id='del_item_").concat(index, "'>Delete</button>\n    </li>  ");
+    return "\n    <tbody>\n    <tr class='add_item ".concat(task.state ? 'checked' : '', "' id='add_item_").concat(index, "'>\n    <td>\n      <div class='descriptions_wrapper'>\n        <input class=\"btn_state\" type=\"checkbox\" id='item_").concat(index, "'  ").concat(task.state ? 'checked' : '', ">\n        <label class=\"descriptions\">").concat(task.description, "</label>\n      </div>\n      </td>\n      <td class='td_button'>\n      <button class='btn btn_delete' id='del_item_").concat(index, "'>Delete</button>\n      </td>\n    </tr> \n    </tbody> ");
   }
 
   function compliteTask(index) {
@@ -123,7 +123,10 @@ document.addEventListener("DOMContentLoaded", function () {
       countToDo.innerHTML = todoCount;
       countDone.innerHTML = doneCount;
       countAll.innerHTML = task.length;
-      localStorage.clear();
+
+      if (storageAvailable('localStorage')) {
+        localStorage.clear();
+      }
     }
   });
   deleteChoose.addEventListener('click', function () {
@@ -136,47 +139,50 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       }
 
-      task.length = task.length - countState;
+      task.splice(-countState, countState);
       addElement(task);
       doneCount = 0;
       countDone.innerHTML = doneCount;
       countAll.innerHTML = task.length;
-      localStorage.setItem('todo', JSON.stringify(task));
+
+      if (storageAvailable('localStorage')) {
+        localStorage.setItem('todo', JSON.stringify(task));
+      }
     }
   });
   filterTodo.addEventListener('click', function () {
-    filterTask(1);
-    document.querySelector(".todo").classList.toggle("todo-moved");
+    filterTask(1); // document.querySelector(".todo").classList.toggle("todo-moved")
+
     filterTodo.classList.add('active');
     filterDone.classList.remove('active');
     filterAll.classList.remove('active');
   });
   filterDone.addEventListener('click', function () {
-    filterTask(2);
-    document.querySelector(".todo").classList.toggle("todo-moved");
+    filterTask(2); // document.querySelector(".todo").classList.toggle("todo-moved");
+
     filterDone.classList.add('active');
     filterTodo.classList.remove('active');
     filterAll.classList.remove('active');
   });
   filterAll.addEventListener('click', function () {
-    addElement(task);
-    document.querySelector(".todo").classList.toggle("todo-moved");
+    addElement(task); // document.querySelector(".todo").classList.toggle("todo-moved");
+
     filterAll.classList.add('active');
     filterDone.classList.remove('active');
     filterTodo.classList.remove('active');
   });
-
-  function dell() {}
-
   todo.addEventListener('click', function (e) {
-    console.log(true);
+    var lastIndex;
 
     if (e.target.classList.value == "btn_state") {
       if (confirm("Move selected element?")) {
         for (var i = 0; i < task.length; i++) {
           if (e.target.id == "item_" + i) {
             compliteTask(i);
-            localStorage.setItem('todo', JSON.stringify(task));
+
+            if (storageAvailable('localStorage')) {
+              localStorage.setItem('todo', JSON.stringify(task));
+            }
           }
         }
       } else {
@@ -189,8 +195,25 @@ document.addEventListener("DOMContentLoaded", function () {
         for (var _i = 0; _i < task.length; _i++) {
           if (e.target.id == "del_item_" + _i) {
             deleteTask(_i);
-            localStorage.setItem('todo', JSON.stringify(task));
+
+            if (storageAvailable('localStorage')) {
+              localStorage.setItem('todo', JSON.stringify(task));
+            }
           }
+        }
+      }
+    }
+
+    if (e.target.classList.value == 'descriptions') {
+      lastIndex = e.target.classList.value;
+      var element = document.querySelector(" e.target.classList.value");
+      console.log(element);
+
+      while (!element.classList.contains("add_item")) {
+        element = element.parentElement;
+
+        if (!element) {
+          break;
         }
       }
     }
@@ -221,8 +244,6 @@ document.addEventListener("DOMContentLoaded", function () {
       countToDo.innerHTML = todoCount;
       countDone.innerHTML = doneCount;
     }
-  } else {
-    console.log('no');
   }
 
   document.getElementById('scrollToTop').addEventListener('click', function () {
@@ -247,7 +268,11 @@ document.addEventListener("DOMContentLoaded", function () {
       task.push(new Task(addInput.value, idElem));
       sortTask();
       addElement(task);
-      localStorage.setItem('todo', JSON.stringify(task));
+
+      if (storageAvailable('localStorage')) {
+        localStorage.setItem('todo', JSON.stringify(task));
+      }
+
       addInput.value = '';
       countAll.innerHTML = '';
       countAll.innerHTML += task.length;

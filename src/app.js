@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const countToDo = document.getElementById('count_todo');
   const countAll = document.getElementById('count_all')
 
+
   let todoItems = [];
   let task = [];
   let activeTask = [];
@@ -25,28 +26,23 @@ document.addEventListener("DOMContentLoaded", function () {
     this.id = id;
   }
 
-
-
   function createTemplate(task, index) {
     return `
-    <tr class='add_item ${task.state ? 'checked' : ''}' >
-    <td>
+    <li class='add_item ${task.state ? 'checked' : ''}' id='add_item_${index}'>
       <div class='descriptions_wrapper'>
         <input class="btn_state" type="checkbox" id='item_${index}'  ${task.state ? 'checked' : ''}>
         <label class="descriptions">${task.description}</label>
       </div>
-      </td>
-      <td class='td_button'>
+      <div class='li_button'>
       <button class='btn btn_delete' id='del_item_${index}'>Delete</button>
-      </td>
-    </tr>  `
+      </div>
+    </li>  `
   }
 
   function compliteTask(index) {
     task[index].state = !task[index].state;
     if (task[index].state) {
       todoItems[index].classList.add('checked');
-
       countToDo.innerHTML = '';
       countDone.innerHTML = '';
       todoCount--;
@@ -68,10 +64,10 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function filterTask(parametr) {
-    if (parametr == 1) {
+    if (parametr == 'do') {
       activeTask = task.filter((item) => item.state == false);
     }
-    if (parametr == 2) {
+    if (parametr == 'done') {
       activeTask = task.filter((item) => item.state == true);
     }
     addElement(activeTask)
@@ -126,7 +122,9 @@ document.addEventListener("DOMContentLoaded", function () {
       countToDo.innerHTML = todoCount;
       countDone.innerHTML = doneCount;
       countAll.innerHTML = task.length;
-      localStorage.clear()
+      if (storageAvailable('localStorage')) {
+        localStorage.clear()
+      }
     }
   })
 
@@ -138,20 +136,21 @@ document.addEventListener("DOMContentLoaded", function () {
           countState++;
         }
       }
-      task.length = task.length - countState;
+      task.splice(-countState, countState)
       addElement(task);
       doneCount = 0;
       countDone.innerHTML = doneCount;
       countAll.innerHTML = task.length;
+      if (storageAvailable('localStorage')) {
+        localStorage.setItem('todo', JSON.stringify(task))
+      }
 
-      localStorage.setItem('todo', JSON.stringify(task))
     }
 
   })
 
   filterTodo.addEventListener('click', function () {
-    filterTask(1)
-    // document.querySelector(".todo").classList.toggle("todo-moved")
+    filterTask('do')
     filterTodo.classList.add('active')
     filterDone.classList.remove('active')
     filterAll.classList.remove('active')
@@ -159,8 +158,7 @@ document.addEventListener("DOMContentLoaded", function () {
   })
 
   filterDone.addEventListener('click', function () {
-    filterTask(2)
-    // document.querySelector(".todo").classList.toggle("todo-moved");
+    filterTask('done')
     filterDone.classList.add('active')
     filterTodo.classList.remove('active')
     filterAll.classList.remove('active')
@@ -168,11 +166,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
   filterAll.addEventListener('click', function () {
     addElement(task);
-    // document.querySelector(".todo").classList.toggle("todo-moved");
     filterAll.classList.add('active')
     filterDone.classList.remove('active')
     filterTodo.classList.remove('active')
   })
+
+  const ul = document.getElementsByTagName('ul')[0];
+  var lastClickedLi = null;
 
   todo.addEventListener('click', function (e) {
     if (e.target.classList.value == "btn_state") {
@@ -180,7 +180,9 @@ document.addEventListener("DOMContentLoaded", function () {
         for (let i = 0; i < task.length; i++) {
           if (e.target.id == "item_" + i) {
             compliteTask(i)
-            localStorage.setItem('todo', JSON.stringify(task))
+            if (storageAvailable('localStorage')) {
+              localStorage.setItem('todo', JSON.stringify(task))
+            }
           }
         }
       } else {
@@ -192,69 +194,101 @@ document.addEventListener("DOMContentLoaded", function () {
         for (let i = 0; i < task.length; i++) {
           if (e.target.id == "del_item_" + i) {
             deleteTask(i)
-
-            localStorage.setItem('todo', JSON.stringify(task))
+            if (storageAvailable('localStorage')) {
+              localStorage.setItem('todo', JSON.stringify(task))
+            }
           }
         }
       }
     }
-    if (e.target.classList.value == "descriptions") {
-      RowClick(e)
+    if (e.target.classList.value == 'descriptions') {
+      if (e.ctrlKey) {
+        e.target.closest('li').classList.toggle('selected')
+      } else if (e.shiftKey) {
+        selectFromLast(e.target.closest('li'));
+      } else {
+        selectSingle(e.target.closest('li'));
+        lastClickedLi = e.target.closest('li');
+      }
     }
+  })
+
+  document.addEventListener('keydown', (e) => {
+    const listLI = document.querySelectorAll('li');
+    if (e.key == 'Delete') {
+      if (confirm("Delete selected elements?")) {
+        for (var index = 0; index < listLI.length; index++) {
+          console.log(listLI[index])
+          if (listLI[index].classList.contains('selected')) {
+
+            task.splice(index, 1)
+          }
+        }
+        addElement(task);
+        doneCount = 0;
+        countDone.innerHTML = doneCount;
+        countAll.innerHTML = task.length;
+        if (storageAvailable('localStorage')) {
+          localStorage.setItem('todo', JSON.stringify(task))
+        }
+
+      }
+    }
+  })
+
+
+  document.addEventListener('click', (e) => {
+    const withinBoundaries = e.composedPath().includes(todo);
+    const listLI = document.querySelectorAll('li');
+    if (!withinBoundaries) {
+      for (var index = 0; index < listLI.length; index++) {
+        if (listLI[index].classList.contains('selected')) {
+          listLI[index].classList.remove('selected')
+        }
+      }
+    }
+
 
   })
 
-  var lastSelectedRow;
-  var trs = document.getElementsByTagName('tr');
-  document.onselectstart = function () {
-    return false;
-  }
-
-  function RowClick(currenttr) {
-
-    if (window.event.ctrlKey) {
-      toggleRow(currenttr);
-      console.log(currenttr, 'ctrl')
-    }
-
-    if (window.event.button === 0) {
-      if (!window.event.ctrlKey && !window.event.shiftKey) {
-        clearAll();
-        toggleRow(currenttr);
-
-        console.log(currenttr, 'ccc', lastSelectedRow)
+  function selectFromLast(target) {
+    const listLI = document.querySelectorAll('li');
+    var startElem = lastClickedLi || ul.children[0];
+    var isLastClickedBefore = compareDocumentPosition(startElem, target) & 4;
+    let firstElem = Array.from(listLI).indexOf(startElem)
+    let lastElem = Array.from(listLI).indexOf(target)
+    if (isLastClickedBefore) {
+      for (var index = firstElem; index <= lastElem; index++) {
+        listLI[index].classList.add('selected')
       }
-
-      if (window.event.shiftKey) {
-        selectRowsBetweenIndexes([lastSelectedRow.rowIndex, currenttr.rowIndex])
-
-        console.log(trs, currenttr, 'shift', [lastSelectedRow.rowIndex, currenttr.rowIndex])
+    } else {
+      for (var index = firstElem; index >= lastElem; index--) {
+        listLI[index].classList.add('selected')
       }
     }
   }
 
-  function toggleRow(row) {
-    console.log(row, row.className)
-    row.className = row.className == 'selected' ? '' : 'selected';
-    lastSelectedRow = row;
-  }
-
-  function selectRowsBetweenIndexes(indexes) {
-    indexes.sort(function (a, b) {
-      return a - b;
-    });
-
-    for (var i = indexes[0]; i <= indexes[1]; i++) {
-      trs[i - 1].className = 'selected';
+  function deselectAll() {
+    for (var i = 0; i < ul.children.length; i++) {
+      ul.children[i].classList.remove('selected');
     }
   }
 
-  function clearAll() {
-    for (var i = 0; i < trs.length; i++) {
-      trs[i].className = '';
-    }
+  function selectSingle(li) {
+    deselectAll();
+    li.classList.add('selected');
   }
 
+  function compareDocumentPosition(a, b) {
+    return a.compareDocumentPosition ?
+      a.compareDocumentPosition(b) :
+      (a != b && a.contains(b) && 16) +
+      (a != b && b.contains(a) && 8) +
+      (a.sourceIndex >= 0 && b.sourceIndex >= 0 ?
+        (a.sourceIndex < b.sourceIndex && 4) +
+        (a.sourceIndex > b.sourceIndex && 2) :
+        1);
+  }
 
   function storageAvailable(type) {
     try {
@@ -280,9 +314,6 @@ document.addEventListener("DOMContentLoaded", function () {
       countToDo.innerHTML = todoCount;
       countDone.innerHTML = doneCount;
     }
-  }
-  else {
-    console.log('no')
   }
 
 
@@ -311,7 +342,9 @@ document.addEventListener("DOMContentLoaded", function () {
       task.push(new Task(addInput.value, idElem))
       sortTask()
       addElement(task);
-      localStorage.setItem('todo', JSON.stringify(task))
+      if (storageAvailable('localStorage')) {
+        localStorage.setItem('todo', JSON.stringify(task))
+      }
       addInput.value = '';
       countAll.innerHTML = '';
       countAll.innerHTML += task.length;

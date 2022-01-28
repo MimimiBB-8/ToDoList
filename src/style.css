@@ -3,6 +3,9 @@
     font-size: 18px;
     margin: 0;
     padding: 0;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
 }
 
 tr{
@@ -124,23 +127,22 @@ input[type="checkbox"] {
     background-color: lightslategrey;
 }
 
-.todo tr {
+.todo li {
     padding: .75em;
 }
 
-.todo tr:not(:last-child) {
+.todo li:not(:last-child) {
     border-bottom: 1px solid #000;
 
 }
 
-.td_button{
+.li_button{
     text-align: right;
 }
-/* .active{
-    color: grey;
-} */
 
-
+.selected {
+    background: rgba(67, 72, 67, 0.319);
+}
 
 .todo-moved {
     animation: shown 1s forwards;
