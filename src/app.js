@@ -20,11 +20,22 @@ document.addEventListener("DOMContentLoaded", function () {
     doneCount = 0,
     idElem = 0;
 
+  class Task {
+    constructor(description, id) {
+      this.description = description;
+      this.id = id;
+      this.state = false;
+    }
+  }
+
+  /* 
   function Task(description, id) {
     this.description = description;
     this.state = false;
     this.id = id;
   }
+  
+  */
 
   function createTemplate(task, index) {
     return `
@@ -38,6 +49,7 @@ document.addEventListener("DOMContentLoaded", function () {
       </div>
     </li>  `
   }
+
 
   function compliteTask(index) {
     task[index].state = !task[index].state;
@@ -59,6 +71,10 @@ document.addEventListener("DOMContentLoaded", function () {
       countToDo.innerHTML += todoCount;
       countDone.innerHTML += doneCount;
     }
+
+  }
+
+  function uppDateTask() {
     sortTask();
     addElement(task);
   }
@@ -175,21 +191,35 @@ document.addEventListener("DOMContentLoaded", function () {
   var lastClickedLi = null;
 
   todo.addEventListener('click', function (e) {
-    if (e.target.classList.value == "btn_state") {
+    const addItem = document.querySelectorAll('.add_item')
+    const st = document.querySelectorAll('.btn_state')
+    if (e.target.classList.contains("btn_state")) {
       if (confirm("Move selected element?")) {
-        for (let i = 0; i < task.length; i++) {
-          if (e.target.id == "item_" + i) {
-            compliteTask(i)
-            if (storageAvailable('localStorage')) {
-              localStorage.setItem('todo', JSON.stringify(task))
+        if (e.target.closest('li').classList.contains("selected")) {
+          for (let i = 0; i < addItem.length; i++) {
+            if (addItem[i].classList.contains('selected')) {
+              compliteTask(i)
+            }
+          }
+          uppDateTask()
+        }
+        else {
+          for (let i = 0; i < task.length; i++) {
+            if (e.target.id == "item_" + i) {
+              compliteTask(i)
+              uppDateTask()
+              if (storageAvailable('localStorage')) {
+                localStorage.setItem('todo', JSON.stringify(task))
+              }
             }
           }
         }
+
       } else {
         e.preventDefault();
       }
     }
-    if (e.target.classList.value == "btn btn_delete") {
+    if (e.target.classList.contains("btn_delete")) {
       if (confirm("Delete selected element?")) {
         for (let i = 0; i < task.length; i++) {
           if (e.target.id == "del_item_" + i) {
@@ -201,7 +231,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       }
     }
-    if (e.target.classList.value == 'descriptions') {
+    if (e.target.classList.contains("descriptions")) {
       if (e.ctrlKey) {
         e.target.closest('li').classList.toggle('selected')
       } else if (e.shiftKey) {
@@ -218,9 +248,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (e.key == 'Delete') {
       if (confirm("Delete selected elements?")) {
         for (var index = 0; index < listLI.length; index++) {
-          console.log(listLI[index])
           if (listLI[index].classList.contains('selected')) {
-
             task.splice(index, 1)
           }
         }
@@ -235,7 +263,6 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     }
   })
-
 
   document.addEventListener('click', (e) => {
     const withinBoundaries = e.composedPath().includes(todo);
@@ -316,12 +343,11 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-
-  document.getElementById('scrollToTop').addEventListener('click', function () {
+  document.getElementById('scrollToTop').addEventListener('click', () => {
     window.scrollTo(0, 0);
   })
 
-  document.getElementById('scrollToBottom').addEventListener('click', function () {
+  document.getElementById('scrollToBottom').addEventListener('click', () => {
     window.scrollTo(0, document.body.scrollHeight);
   })
 
@@ -338,10 +364,14 @@ document.addEventListener("DOMContentLoaded", function () {
   function actionInput() {
     if (addInput.value.length > 0) {
       countToDo.innerHTML = '';
+      /*добавление случайных значений в список задачь*/
+      // for (let i = 0; i <= 15; i++) {
+      //   idElem += 1;
+      //   task.push(new Task(getRandomInt(1, 20), idElem))
+      // }
       idElem += 1;
       task.push(new Task(addInput.value, idElem))
-      sortTask()
-      addElement(task);
+      uppDateTask()
       if (storageAvailable('localStorage')) {
         localStorage.setItem('todo', JSON.stringify(task))
       }
@@ -354,4 +384,12 @@ document.addEventListener("DOMContentLoaded", function () {
       alert('Please, write your task')
     }
   }
+
+  function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min)) + min;
+  }
+
+
 });
